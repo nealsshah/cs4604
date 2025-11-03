@@ -3,15 +3,15 @@ import mysql.connector as mc
 from tkinter import *
 from tkinter import messagebox
 
-# ---- DB connection (edit if you used different creds) ----
+# DB connection
 DB_CONFIG = dict(
     host="localhost",
-    user="jat_user",          # or 'root'
-    password="jat_pass_123",  # or your root password
+    user="jat_user",         
+    password="jat_pass_123",  
     database="jat_db"
 )
 
-EMAIL_RE = re.compile(r".+@.+\..+")  # very light check
+EMAIL_RE = re.compile(r".+@.+\..+") 
 
 def connect_db():
     try:
@@ -20,14 +20,14 @@ def connect_db():
         messagebox.showerror("DB Error", f"Could not connect:\n{e}")
         return None
 
-# ---- Actions ----
+# Actions
 def insert_applicant():
     fname = entry_first.get().strip()
     lname = entry_last.get().strip()
     email = entry_email.get().strip()
     phone = entry_phone.get().strip()
 
-    # basic validation
+    # validation
     if not fname or not lname:
         messagebox.showwarning("Missing data", "Enter first and last name.")
         return
@@ -54,7 +54,7 @@ def insert_applicant():
             e.delete(0, END)
         label_msg.config(text=f"Inserted ApplicantID {new_id}", fg="green")
     except mc.IntegrityError as e:
-        # likely duplicate email (UNIQUE constraint)
+        # likely duplicate email
         messagebox.showerror("Duplicate", "That email is already in use.")
         label_msg.config(text="Insert failed: duplicate email", fg="red")
     except mc.Error as e:
@@ -88,7 +88,7 @@ def delete_applicant():
     finally:
         conn.close()
 
-# ---- GUI ----
+# GUI
 root = Tk()
 root.title("CS4604 Phase 2 - Insert/Delete GUI")
 root.resizable(False, False)
