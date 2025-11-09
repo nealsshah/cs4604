@@ -393,7 +393,8 @@ def delete_job_posting():
 # ==================== GUI ====================
 root = Tk()
 root.title("CS4604 Phase 2 - Job Application System")
-root.resizable(False, False)
+root.geometry("600x700")
+root.minsize(500, 600)
 
 # Create notebook for tabs
 notebook = ttk.Notebook(root)
@@ -402,10 +403,12 @@ notebook.pack(padx=10, pady=10, fill=BOTH, expand=True)
 # ==================== TAB 1: JobApplicant ====================
 tab_applicant = Frame(notebook)
 notebook.add(tab_applicant, text="Job Applicant")
+tab_applicant.columnconfigure(0, weight=1)
 
 # Insert area
 frm_ins = LabelFrame(tab_applicant, text="Insert into JobApplicant")
 frm_ins.grid(row=0, column=0, padx=12, pady=8, sticky="ew")
+frm_ins.columnconfigure(1, weight=1)
 
 Label(frm_ins, text="First Name:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_first = Entry(frm_ins, width=32)
@@ -429,6 +432,7 @@ Button(frm_ins, text="INSERT APPLICANT", command=insert_applicant, width=32)\
 # Delete area
 frm_del = LabelFrame(tab_applicant, text="Delete from JobApplicant")
 frm_del.grid(row=1, column=0, padx=12, pady=8, sticky="ew")
+frm_del.columnconfigure(1, weight=1)
 
 Label(frm_del, text="ApplicantID:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_id = Entry(frm_del, width=32)
@@ -444,10 +448,12 @@ label_msg.grid(row=2, column=0, padx=12, pady=(0,12))
 # ==================== TAB 2: CandidateProfile ====================
 tab_profile = Frame(notebook)
 notebook.add(tab_profile, text="Candidate Profile")
+tab_profile.columnconfigure(0, weight=1)
 
 # Create Profile
 frm_create = LabelFrame(tab_profile, text="Create CandidateProfile")
 frm_create.grid(row=0, column=0, padx=12, pady=8, sticky="ew")
+frm_create.columnconfigure(1, weight=1)
 
 Label(frm_create, text="ApplicantID:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_cp_applicant_id = Entry(frm_create, width=32)
@@ -471,6 +477,7 @@ Button(frm_create, text="CREATE PROFILE", command=create_candidate_profile, widt
 # Read/Search Profile
 frm_read = LabelFrame(tab_profile, text="View CandidateProfile")
 frm_read.grid(row=1, column=0, padx=12, pady=8, sticky="ew")
+frm_read.columnconfigure(1, weight=1)
 
 Label(frm_read, text="Search By:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 cp_search_by = StringVar(value="CandidateID")
@@ -493,6 +500,7 @@ text_cp_result.grid(row=3, column=1, padx=6, pady=6)
 # Update Profile
 frm_update = LabelFrame(tab_profile, text="Update CandidateProfile")
 frm_update.grid(row=2, column=0, padx=12, pady=8, sticky="ew")
+frm_update.columnconfigure(1, weight=1)
 
 Label(frm_update, text="CandidateID:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_cp_update_id = Entry(frm_update, width=32)
@@ -516,6 +524,7 @@ Button(frm_update, text="UPDATE PROFILE", command=update_candidate_profile, widt
 # Delete Profile
 frm_cp_del = LabelFrame(tab_profile, text="Delete CandidateProfile")
 frm_cp_del.grid(row=3, column=0, padx=12, pady=8, sticky="ew")
+frm_cp_del.columnconfigure(1, weight=1)
 
 Label(frm_cp_del, text="CandidateID:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_cp_delete_id = Entry(frm_cp_del, width=32)
@@ -531,10 +540,12 @@ label_cp_msg.grid(row=4, column=0, padx=12, pady=(0,12))
 # ==================== TAB 3: JobPosting ====================
 tab_job = Frame(notebook)
 notebook.add(tab_job, text="Job Posting")
+tab_job.columnconfigure(0, weight=1)
 
 # Create Job Posting
 frm_jp_create = LabelFrame(tab_job, text="Create JobPosting")
 frm_jp_create.grid(row=0, column=0, padx=12, pady=8, sticky="ew")
+frm_jp_create.columnconfigure(1, weight=1)
 
 Label(frm_jp_create, text="RecruiterID:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_jp_recruiter_id = Entry(frm_jp_create, width=32)
@@ -558,6 +569,7 @@ Button(frm_jp_create, text="CREATE JOB POSTING", command=create_job_posting, wid
 # Read/Search Job Posting
 frm_jp_read = LabelFrame(tab_job, text="View JobPosting")
 frm_jp_read.grid(row=1, column=0, padx=12, pady=8, sticky="ew")
+frm_jp_read.columnconfigure(1, weight=1)
 
 Label(frm_jp_read, text="Search By:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 jp_search_by = StringVar(value="JobID")
@@ -580,6 +592,7 @@ text_jp_result.grid(row=3, column=1, padx=6, pady=6)
 # Update Job Posting
 frm_jp_update = LabelFrame(tab_job, text="Update JobPosting")
 frm_jp_update.grid(row=2, column=0, padx=12, pady=8, sticky="ew")
+frm_jp_update.columnconfigure(1, weight=1)
 
 Label(frm_jp_update, text="JobID:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_jp_update_id = Entry(frm_jp_update, width=32)
@@ -603,6 +616,7 @@ Button(frm_jp_update, text="UPDATE JOB POSTING", command=update_job_posting, wid
 # Delete Job Posting
 frm_jp_del = LabelFrame(tab_job, text="Delete JobPosting")
 frm_jp_del.grid(row=3, column=0, padx=12, pady=8, sticky="ew")
+frm_jp_del.columnconfigure(1, weight=1)
 
 Label(frm_jp_del, text="JobID:").grid(row=0, column=0, padx=6, pady=6, sticky="e")
 entry_jp_delete_id = Entry(frm_jp_del, width=32)
