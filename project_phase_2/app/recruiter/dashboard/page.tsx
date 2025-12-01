@@ -63,11 +63,15 @@ export default function RecruiterDashboard() {
     try {
       const res = await fetch(`/api/recruiter/jobs${recruiterId ? `?recruiterId=${recruiterId}` : ''}`);
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok && data.jobs && Array.isArray(data.jobs)) {
         setJobs(data.jobs);
+      } else {
+        console.error('Failed to load jobs:', data.error || 'Invalid response');
+        // Don't clear existing jobs on error - preserve current state
       }
     } catch (err) {
       console.error('Failed to load jobs:', err);
+      // Don't clear existing jobs on error - preserve current state
     }
   };
 
@@ -218,7 +222,14 @@ export default function RecruiterDashboard() {
             <button onClick={loadJobs} className="btn btn-primary" style={{ marginBottom: '20px' }}>
               Refresh
             </button>
-            <JobPostingForm recruiterId={recruiterId} onSuccess={loadJobs} />
+            <JobPostingForm recruiterId={recruiterId} onSuccess={(newJob) => {
+              // Optimistically add the new job to the list immediately
+              if (newJob) {
+                setJobs(prevJobs => [newJob, ...prevJobs]);
+              }
+              // Then refresh to ensure consistency
+              loadJobs();
+            }} />
             <table>
               <thead>
                 <tr>
@@ -729,7 +740,7 @@ export default function RecruiterDashboard() {
   }
 }
 
-function JobPostingForm({ recruiterId, onSuccess }: { recruiterId: string; onSuccess: () => void }) {
+function JobPostingForm({ recruiterId, onSuccess }: { recruiterId: string; onSuccess: (newJob?: any) => void }) {
   const [title, setTitle] = useState('');
   const [department, setDepartment] = useState('');
   const [location, setLocation] = useState('');
@@ -762,12 +773,26 @@ function JobPostingForm({ recruiterId, onSuccess }: { recruiterId: string; onSuc
         }),
       });
       if (res.ok) {
+        const responseData = await res.json();
         setMessage('Job posting created successfully!');
+        
+        // Create optimistic job object for immediate display
+        const newJob = {
+          JobID: responseData.jobId,
+          RecruiterID: parseInt(recruiterId),
+          Title: title,
+          Department: department || null,
+          Location: location || null,
+          EmploymentType: employmentType,
+          PostedDate: postedDate,
+          Status: status || 'Open'
+        };
+        
         setTitle('');
         setDepartment('');
         setLocation('');
         setTimeout(() => setMessage(''), 3000);
-        onSuccess();
+        onSuccess(newJob);
       } else {
         const data = await res.json();
         setMessage(data.error || 'Failed to create job posting');
