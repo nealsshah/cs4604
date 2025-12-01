@@ -3,18 +3,21 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import { useDialog } from '@/components/Dialog';
 
 export default function ApplicantDashboard() {
   const router = useRouter();
+  const { showAlert, showConfirm, DialogComponent } = useDialog();
   const [user, setUser] = useState<any>(null);
   const [applicantId, setApplicantId] = useState('');
   const [applicantInfo, setApplicantInfo] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [jobs, setJobs] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'profile' | 'jobs' | 'applications'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'jobs' | 'applications' | 'reports' | 'settings'>('profile');
   const [loading, setLoading] = useState(true);
   const [showCreateRecord, setShowCreateRecord] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -48,6 +51,10 @@ export default function ApplicantDashboard() {
       const data = await res.json();
       if (res.ok) {
         setJobs(data.jobs);
+        // Also load applications to check which jobs are already applied to
+        if (applicantId) {
+          loadApplications();
+        }
       }
     } catch (err) {
       console.error('Failed to load jobs:', err);
@@ -123,7 +130,13 @@ export default function ApplicantDashboard() {
 
   useEffect(() => {
     if (activeTab === 'profile' && applicantId) loadProfile();
-    if (activeTab === 'jobs') loadJobs();
+    if (activeTab === 'jobs') {
+      loadJobs();
+      // Also load applications to check applied status
+      if (applicantId) {
+        loadApplications();
+      }
+    }
     if (activeTab === 'applications' && applicantId) loadApplications();
   }, [activeTab, applicantId]);
 
@@ -139,6 +152,7 @@ export default function ApplicantDashboard() {
   return (
     <>
       <Navbar />
+      <DialogComponent />
       <div className="container">
         <h1>Applicant Dashboard</h1>
         
@@ -166,14 +180,12 @@ export default function ApplicantDashboard() {
           />
         )}
 
-        {applicantId && (
+        {applicantId && applicantInfo && (
           <div className="alert alert-success">
-            <strong style={{ fontSize: '16px' }}>✓ Your ApplicantID: {applicantId}</strong>
-            {applicantInfo && (
-              <div style={{ marginTop: '8px', fontSize: '14px' }}>
-                {applicantInfo.FirstName} {applicantInfo.LastName} • {applicantInfo.Email}
-              </div>
-            )}
+            <strong style={{ fontSize: '18px' }}>Welcome, {applicantInfo.FirstName} {applicantInfo.LastName}!</strong>
+            <div style={{ marginTop: '8px', fontSize: '14px', opacity: 0.8 }}>
+              {applicantInfo.Email} • Applicant ID: {applicantId}
+            </div>
           </div>
         )}
 
@@ -199,54 +211,92 @@ export default function ApplicantDashboard() {
           >
             My Applications
           </button>
+          <button
+            className={`btn ${activeTab === 'reports' ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => setActiveTab('reports')}
+            style={{ minWidth: '150px' }}
+          >
+            Reports
+          </button>
+          <button
+            className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => setActiveTab('settings')}
+            style={{ minWidth: '150px' }}
+          >
+            Account Settings
+          </button>
         </div>
 
         {activeTab === 'profile' && (
           <div className="card">
-            <h2>My Profile</h2>
-            {profile ? (
-              <div style={{ padding: '20px', background: '#f8f9ff', borderRadius: '12px', marginBottom: '24px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h2 style={{ margin: 0 }}>My Profile</h2>
+              {profile && (
+                <button
+                  onClick={() => setEditingProfile(!editingProfile)}
+                  className="btn btn-secondary"
+                  style={{ padding: '8px 16px', fontSize: '14px' }}
+                >
+                  {editingProfile ? '✕ Cancel' : '✏️ Edit'}
+                </button>
+              )}
+            </div>
+            {profile && !editingProfile ? (
+              <div style={{ padding: '24px', background: '#f8f9ff', borderRadius: '12px', marginBottom: '24px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
                   <div>
-                    <strong style={{ color: '#667eea' }}>Location:</strong>
-                    <p style={{ marginTop: '4px' }}>{profile.Location || 'Not specified'}</p>
+                    <strong style={{ color: '#667eea', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Location</strong>
+                    <p style={{ marginTop: '8px', fontSize: '16px', color: '#333' }}>{profile.Location || 'Not specified'}</p>
                   </div>
                   <div>
-                    <strong style={{ color: '#667eea' }}>LinkedIn:</strong>
-                    <p style={{ marginTop: '4px' }}>
+                    <strong style={{ color: '#667eea', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>LinkedIn</strong>
+                    <p style={{ marginTop: '8px', fontSize: '16px' }}>
                       {profile.LinkedInURL ? (
-                        <a href={profile.LinkedInURL} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>
-                          {profile.LinkedInURL}
+                        <a href={profile.LinkedInURL} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>
+                          {profile.LinkedInURL} ↗
                         </a>
                       ) : (
-                        'Not specified'
+                        <span style={{ color: '#999' }}>Not specified</span>
                       )}
                     </p>
                   </div>
                   <div>
-                    <strong style={{ color: '#667eea' }}>Portfolio:</strong>
-                    <p style={{ marginTop: '4px' }}>
+                    <strong style={{ color: '#667eea', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Portfolio</strong>
+                    <p style={{ marginTop: '8px', fontSize: '16px' }}>
                       {profile.PortfolioURL ? (
-                        <a href={profile.PortfolioURL} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>
-                          {profile.PortfolioURL}
+                        <a href={profile.PortfolioURL} target="_blank" rel="noopener noreferrer" style={{ color: '#667eea', textDecoration: 'none' }}>
+                          {profile.PortfolioURL} ↗
                         </a>
                       ) : (
-                        'Not specified'
+                        <span style={{ color: '#999' }}>Not specified</span>
                       )}
                     </p>
                   </div>
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <strong style={{ color: '#667eea' }}>Summary:</strong>
-                    <p style={{ marginTop: '4px', lineHeight: '1.6' }}>{profile.Summary || 'Not specified'}</p>
+                    <strong style={{ color: '#667eea', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Professional Summary</strong>
+                    <p style={{ marginTop: '8px', fontSize: '16px', lineHeight: '1.6', color: '#333', whiteSpace: 'pre-wrap' }}>
+                      {profile.Summary || <span style={{ color: '#999' }}>Not specified</span>}
+                    </p>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="alert alert-info" style={{ marginBottom: '24px' }}>
-                No profile found. Please create one below.
-              </div>
+              !profile && (
+                <div className="alert alert-info" style={{ marginBottom: '24px' }}>
+                  No profile found. Please create one below.
+                </div>
+              )
             )}
-            <ProfileForm applicantId={applicantId} onSuccess={loadProfile} />
+            {(editingProfile || !profile) && (
+              <ProfileForm 
+                applicantId={applicantId} 
+                onSuccess={() => {
+                  loadProfile();
+                  setEditingProfile(false);
+                }}
+                initialData={profile}
+              />
+            )}
             <ResumeUpload applicantId={applicantId} />
           </div>
         )}
@@ -288,22 +338,43 @@ export default function ApplicantDashboard() {
                       <td>{job.EmploymentType}</td>
                       <td>{new Date(job.PostedDate).toLocaleDateString()}</td>
                       <td>
-                        {applicantId ? (
-                          <button
-                            className="btn btn-success"
-                            onClick={() => handleApply(job.JobID)}
-                          >
-                            Apply
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-secondary"
-                            disabled
-                            title="Create your applicant record first"
-                          >
-                            Apply (Setup Required)
-                          </button>
-                        )}
+                        {(() => {
+                          // Check if applicant has already applied to this job
+                          const hasApplied = applicantId && applications.some((app: any) => app.JobID === job.JobID);
+                          
+                          if (!applicantId) {
+                            return (
+                              <button
+                                className="btn btn-secondary"
+                                disabled
+                                title="Create your applicant record first"
+                              >
+                                Apply (Setup Required)
+                              </button>
+                            );
+                          }
+                          
+                          if (hasApplied) {
+                            return (
+                              <button
+                                className="btn btn-secondary"
+                                disabled
+                                style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                              >
+                                Applied
+                              </button>
+                            );
+                          }
+                          
+                          return (
+                            <button
+                              className="btn btn-success"
+                              onClick={() => handleApply(job.JobID)}
+                            >
+                              Apply
+                            </button>
+                          );
+                        })()}
                       </td>
                     </tr>
                   ))}
@@ -360,18 +431,27 @@ export default function ApplicantDashboard() {
             </table>
           </div>
         )}
+
+        {activeTab === 'reports' && (
+          <ApplicantReports applicantId={applicantId} />
+        )}
+
+        {activeTab === 'settings' && (
+          <AccountSettings />
+        )}
       </div>
     </>
   );
 
   async function handleApply(jobId: number) {
     if (!applicantId) {
-      alert('Please create your applicant record first. Go to the Profile tab to set up your account.');
+      await showAlert('Please create your applicant record first. Go to the Profile tab to set up your account.', 'Setup Required');
       setActiveTab('profile');
       return;
     }
     
-    if (!confirm(`Apply to this job?`)) {
+    const confirmed = await showConfirm('Apply to this job?', 'Confirm Application');
+    if (!confirmed) {
       return;
     }
 
@@ -383,35 +463,40 @@ export default function ApplicantDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert('Application submitted successfully!');
+        await showAlert('Application submitted successfully!', 'Success');
         loadApplications();
         // Refresh jobs to show updated status
         loadJobs();
       } else {
-        alert(`Failed to apply: ${data.error || 'Unknown error'}`);
+        await showAlert(`Failed to apply: ${data.error || 'Unknown error'}`, 'Error');
       }
     } catch (err: any) {
-      alert(`Failed to apply: ${err.message || 'Network error'}`);
+      await showAlert(`Failed to apply: ${err.message || 'Network error'}`, 'Error');
     }
   }
 
   async function handleWithdraw(applicationId: number) {
-    if (!confirm('Are you sure you want to withdraw this application?')) return;
+    const confirmed = await showConfirm('Are you sure you want to withdraw this application?', 'Confirm Withdrawal');
+    if (!confirmed) return;
     try {
       const res = await fetch(`/api/applicant/applications?applicationId=${applicationId}`, {
         method: 'DELETE',
       });
       if (res.ok) {
-        alert('Application withdrawn');
+        await showAlert('Application withdrawn successfully', 'Success');
         loadApplications();
+      } else {
+        const data = await res.json();
+        await showAlert(data.error || 'Failed to withdraw', 'Error');
       }
     } catch (err) {
-      alert('Failed to withdraw');
+      await showAlert('Failed to withdraw', 'Error');
     }
   }
 
   async function handleAcceptOffer(applicationId: number) {
-    if (!confirm('Accept this offer?')) return;
+    const confirmed = await showConfirm('Accept this offer?', 'Confirm Acceptance');
+    if (!confirmed) return;
     try {
       const res = await fetch('/api/applicant/applications', {
         method: 'PUT',
@@ -419,22 +504,35 @@ export default function ApplicantDashboard() {
         body: JSON.stringify({ applicationId }),
       });
       if (res.ok) {
-        alert('Offer accepted!');
+        await showAlert('Offer accepted! Congratulations!', 'Success');
         loadApplications();
+      } else {
+        const data = await res.json();
+        await showAlert(data.error || 'Failed to accept offer', 'Error');
       }
     } catch (err) {
-      alert('Failed to accept offer');
+      await showAlert('Failed to accept offer', 'Error');
     }
   }
 }
 
-function ProfileForm({ applicantId, onSuccess }: { applicantId: string; onSuccess: () => void }) {
-  const [location, setLocation] = useState('');
-  const [linkedIn, setLinkedIn] = useState('');
-  const [portfolio, setPortfolio] = useState('');
-  const [summary, setSummary] = useState('');
+function ProfileForm({ applicantId, onSuccess, initialData }: { applicantId: string; onSuccess: () => void; initialData?: any }) {
+  const [location, setLocation] = useState(initialData?.Location || '');
+  const [linkedIn, setLinkedIn] = useState(initialData?.LinkedInURL || '');
+  const [portfolio, setPortfolio] = useState(initialData?.PortfolioURL || '');
+  const [summary, setSummary] = useState(initialData?.Summary || '');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  // Update form when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setLocation(initialData.Location || '');
+      setLinkedIn(initialData.LinkedInURL || '');
+      setPortfolio(initialData.PortfolioURL || '');
+      setSummary(initialData.Summary || '');
+    }
+  }, [initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -467,7 +565,7 @@ function ProfileForm({ applicantId, onSuccess }: { applicantId: string; onSucces
 
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: '24px', padding: '24px', background: '#f8f9ff', borderRadius: '12px' }}>
-      <h3>Create/Update Profile</h3>
+      <h3>{initialData ? 'Update Profile' : 'Create Profile'}</h3>
       <label htmlFor="location">Location</label>
       <input type="text" id="location" placeholder="City, State" value={location} onChange={(e) => setLocation(e.target.value)} />
       <label htmlFor="linkedin">LinkedIn URL</label>
@@ -477,9 +575,30 @@ function ProfileForm({ applicantId, onSuccess }: { applicantId: string; onSucces
       <label htmlFor="summary">Professional Summary</label>
       <textarea id="summary" placeholder="Tell us about yourself, your skills, and experience..." value={summary} onChange={(e) => setSummary(e.target.value)} rows={5} />
       {message && <div className={message.includes('success') ? 'success' : 'error'}>{message}</div>}
-      <button type="submit" className="btn btn-primary" disabled={loading || !applicantId}>
-        {loading ? 'Saving...' : 'Save Profile'}
-      </button>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button type="submit" className="btn btn-primary" disabled={loading || !applicantId} style={{ flex: 1 }}>
+          {loading ? 'Saving...' : initialData ? 'Update Profile' : 'Create Profile'}
+        </button>
+        {initialData && (
+          <button 
+            type="button" 
+            className="btn btn-secondary" 
+            onClick={() => {
+              // Reset form to original values
+              if (initialData) {
+                setLocation(initialData.Location || '');
+                setLinkedIn(initialData.LinkedInURL || '');
+                setPortfolio(initialData.PortfolioURL || '');
+                setSummary(initialData.Summary || '');
+              }
+              onSuccess();
+            }} 
+            style={{ flex: 1 }}
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }
@@ -631,6 +750,170 @@ function CreateApplicantRecord({ onSuccess, onCancel }: { onSuccess: (id: number
             Cancel
           </button>
         </div>
+      </form>
+    </div>
+  );
+}
+
+function ApplicantReports({ applicantId }: { applicantId: string }) {
+  const [selectedReport, setSelectedReport] = useState<string>('1');
+  const [reportData, setReportData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  const reports = [
+    { id: '1', name: 'Total Applications Submitted', description: 'Count of all job applications' },
+    { id: '2', name: 'Average Days Since Application by Status', description: 'Average days since application grouped by status' },
+    { id: '3', name: 'Month with Most Applications', description: 'The month with maximum applications' },
+    { id: '4', name: 'Days Analysis for Offers', description: 'Min, max, and average days for offer applications' },
+    { id: '5', name: 'Application Status Summary', description: 'Total count breakdown by application status' },
+  ];
+
+  const loadReport = async () => {
+    if (!applicantId) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/applicant/reports?type=${selectedReport}&applicantId=${applicantId}`);
+      const data = await res.json();
+      if (res.ok) {
+        setReportData(data);
+      }
+    } catch (err) {
+      console.error('Failed to load report:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="card">
+      <h2>Statistical Reports</h2>
+      {!applicantId ? (
+        <div className="alert alert-warning">
+          Please create your applicant record first to view reports.
+        </div>
+      ) : (
+        <>
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="reportSelect">Select Report:</label>
+            <select
+              id="reportSelect"
+              value={selectedReport}
+              onChange={(e) => setSelectedReport(e.target.value)}
+              style={{ width: '100%', marginBottom: '12px' }}
+            >
+              {reports.map((r) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+            <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>
+              {reports.find(r => r.id === selectedReport)?.description}
+            </p>
+            <button onClick={loadReport} className="btn btn-primary" disabled={loading}>
+              {loading ? 'Loading...' : 'Generate Report'}
+            </button>
+          </div>
+
+          {reportData && (
+            <div style={{ padding: '24px', background: '#f8f9ff', borderRadius: '12px' }}>
+              <h3>{reportData.report}</h3>
+              <p style={{ color: '#666', marginBottom: '16px' }}>{reportData.description}</p>
+              <pre style={{ background: '#fff', padding: '16px', borderRadius: '8px', overflow: 'auto' }}>
+                {JSON.stringify(reportData.data, null, 2)}
+              </pre>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function AccountSettings() {
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const { showAlert } = useDialog();
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage('');
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setMessage('All fields are required');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setMessage('New password must be at least 6 characters');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setMessage('New passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        await showAlert('Password changed successfully!', 'Success');
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setMessage('');
+      } else {
+        setMessage(data.error || 'Failed to change password');
+      }
+    } catch (err) {
+      setMessage('Failed to change password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="card">
+      <h2>Account Settings</h2>
+      <form onSubmit={handleChangePassword} style={{ maxWidth: '500px' }}>
+        <h3 style={{ marginBottom: '16px' }}>Change Password</h3>
+        <label htmlFor="oldPassword">Current Password</label>
+        <input
+          type="password"
+          id="oldPassword"
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
+          required
+        />
+        <label htmlFor="newPassword">New Password</label>
+        <input
+          type="password"
+          id="newPassword"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          required
+          minLength={6}
+        />
+        <label htmlFor="confirmPassword">Confirm New Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          minLength={6}
+        />
+        {message && <div className={message.includes('success') ? 'success' : 'error'}>{message}</div>}
+        <button type="submit" className="btn btn-primary" disabled={loading}>
+          {loading ? 'Changing Password...' : 'Change Password'}
+        </button>
       </form>
     </div>
   );

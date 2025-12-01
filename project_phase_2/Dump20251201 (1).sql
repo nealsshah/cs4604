@@ -21,7 +21,7 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '88911fd0-b049-11f0-acc4-24b316546602:1-69';
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '88911fd0-b049-11f0-acc4-24b316546602:1-104';
 
 --
 -- Table structure for table `ApplicationForm`
@@ -41,7 +41,7 @@ CREATE TABLE `ApplicationForm` (
   KEY `JobID` (`JobID`),
   CONSTRAINT `applicationform_ibfk_1` FOREIGN KEY (`ApplicantID`) REFERENCES `JobApplicant` (`ApplicantID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `applicationform_ibfk_2` FOREIGN KEY (`JobID`) REFERENCES `JobPosting` (`JobID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -50,7 +50,7 @@ CREATE TABLE `ApplicationForm` (
 
 LOCK TABLES `ApplicationForm` WRITE;
 /*!40000 ALTER TABLE `ApplicationForm` DISABLE KEYS */;
-INSERT INTO `ApplicationForm` VALUES (1,17,7,'Under Review','2025-10-23 15:57:18'),(2,11,1,'Submitted','2025-10-23 15:57:18'),(3,1,1,'Submitted','2025-10-23 15:57:18'),(4,14,4,'Offer','2025-10-23 15:57:18'),(5,16,6,'Submitted','2025-10-23 15:57:18'),(6,19,9,'Offer','2025-10-23 15:57:18'),(7,5,5,'Rejected','2025-10-23 15:57:18'),(8,8,8,'Interview Scheduled','2025-10-23 15:57:18'),(9,15,5,'Rejected','2025-10-23 15:57:18'),(10,13,3,'Interview Scheduled','2025-10-23 15:57:18'),(11,20,10,'Rejected','2025-10-23 15:57:18'),(12,9,9,'Offer','2025-10-23 15:57:18'),(13,12,2,'Under Review','2025-10-23 15:57:18'),(14,2,2,'Under Review','2025-10-23 15:57:18'),(15,10,10,'Rejected','2025-10-23 15:57:18'),(16,3,3,'Interview Scheduled','2025-10-23 15:57:18'),(17,4,4,'Offer','2025-10-23 15:57:18'),(18,6,6,'Submitted','2025-10-23 15:57:18'),(19,7,7,'Under Review','2025-10-23 15:57:18'),(20,18,8,'Interview Scheduled','2025-10-23 15:57:18');
+INSERT INTO `ApplicationForm` VALUES (1,17,7,'Under Review','2025-10-23 15:57:18'),(2,11,1,'Submitted','2025-10-23 15:57:18'),(3,1,1,'Submitted','2025-10-23 15:57:18'),(4,14,4,'Offer','2025-10-23 15:57:18'),(5,16,6,'Submitted','2025-10-23 15:57:18'),(6,19,9,'Offer','2025-10-23 15:57:18'),(7,5,5,'Rejected','2025-10-23 15:57:18'),(8,8,8,'Interview Scheduled','2025-10-23 15:57:18'),(9,15,5,'Rejected','2025-10-23 15:57:18'),(10,13,3,'Interview Scheduled','2025-10-23 15:57:18'),(11,20,10,'Interview Scheduled','2025-10-23 15:57:18'),(12,9,9,'Offer','2025-10-23 15:57:18'),(13,12,2,'Under Review','2025-10-23 15:57:18'),(14,2,2,'Under Review','2025-10-23 15:57:18'),(15,10,10,'Rejected','2025-10-23 15:57:18'),(16,3,3,'Interview Scheduled','2025-10-23 15:57:18'),(17,4,4,'Offer','2025-10-23 15:57:18'),(19,7,7,'Under Review','2025-10-23 15:57:18'),(20,18,8,'Interview Scheduled','2025-10-23 15:57:18'),(21,25,10,'Interview Scheduled','2025-12-01 15:30:08'),(22,25,6,'Submitted','2025-12-01 16:59:56'),(23,25,8,'Submitted','2025-12-01 17:31:04');
 /*!40000 ALTER TABLE `ApplicationForm` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71,7 +71,7 @@ CREATE TABLE `CandidateProfile` (
   PRIMARY KEY (`ProfileID`),
   UNIQUE KEY `ApplicantID` (`ApplicantID`),
   CONSTRAINT `candidateprofile_ibfk_1` FOREIGN KEY (`ApplicantID`) REFERENCES `JobApplicant` (`ApplicantID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,7 +80,7 @@ CREATE TABLE `CandidateProfile` (
 
 LOCK TABLES `CandidateProfile` WRITE;
 /*!40000 ALTER TABLE `CandidateProfile` DISABLE KEYS */;
-INSERT INTO `CandidateProfile` VALUES (1,17,'City 17','https://www.linkedin.com/in/user17','https://portfolio.example.com/u17','Full-stack dev with interest in data.'),(2,11,'City 11','https://www.linkedin.com/in/user11','https://portfolio.example.com/u11','Full-stack dev with interest in data.'),(3,1,'City 1','https://www.linkedin.com/in/user1','https://portfolio.example.com/u1','Full-stack dev with interest in data.'),(4,14,'City 14','https://www.linkedin.com/in/user14','https://portfolio.example.com/u14','Full-stack dev with interest in data.'),(5,16,'City 16','https://www.linkedin.com/in/user16','https://portfolio.example.com/u16','Full-stack dev with interest in data.'),(6,19,'City 19','https://www.linkedin.com/in/user19','https://portfolio.example.com/u19','Full-stack dev with interest in data.'),(7,5,'City 5','https://www.linkedin.com/in/user5','https://portfolio.example.com/u5','Full-stack dev with interest in data.'),(8,8,'City 8','https://www.linkedin.com/in/user8','https://portfolio.example.com/u8','Full-stack dev with interest in data.'),(9,15,'City 15','https://www.linkedin.com/in/user15','https://portfolio.example.com/u15','Full-stack dev with interest in data.'),(10,13,'City 13','https://www.linkedin.com/in/user13','https://portfolio.example.com/u13','Full-stack dev with interest in data.'),(11,20,'City 20','https://www.linkedin.com/in/user20','https://portfolio.example.com/u20','Full-stack dev with interest in data.'),(12,9,'City 9','https://www.linkedin.com/in/user9','https://portfolio.example.com/u9','Full-stack dev with interest in data.'),(13,12,'City 12','https://www.linkedin.com/in/user12','https://portfolio.example.com/u12','Full-stack dev with interest in data.'),(14,2,'City 2','https://www.linkedin.com/in/user2','https://portfolio.example.com/u2','Full-stack dev with interest in data.'),(15,10,'City 10','https://www.linkedin.com/in/user10','https://portfolio.example.com/u10','Full-stack dev with interest in data.'),(16,3,'City 3','https://www.linkedin.com/in/user3','https://portfolio.example.com/u3','Full-stack dev with interest in data.'),(17,4,'City 4','https://www.linkedin.com/in/user4','https://portfolio.example.com/u4','Full-stack dev with interest in data.'),(18,6,'City 6','https://www.linkedin.com/in/user6','https://portfolio.example.com/u6','Full-stack dev with interest in data.'),(19,7,'City 7','https://www.linkedin.com/in/user7','https://portfolio.example.com/u7','Full-stack dev with interest in data.'),(20,18,'City 18','https://www.linkedin.com/in/user18','https://portfolio.example.com/u18','Full-stack dev with interest in data.');
+INSERT INTO `CandidateProfile` VALUES (1,17,'City 17','https://www.linkedin.com/in/user17','https://portfolio.example.com/u17','Full-stack dev with interest in data.'),(2,11,'City 11','https://www.linkedin.com/in/user11','https://portfolio.example.com/u11','Full-stack dev with interest in data.'),(3,1,'City 1','https://www.linkedin.com/in/user1','https://portfolio.example.com/u1','Full-stack dev with interest in data.'),(4,14,'City 14','https://www.linkedin.com/in/user14','https://portfolio.example.com/u14','Full-stack dev with interest in data.'),(5,16,'City 16','https://www.linkedin.com/in/user16','https://portfolio.example.com/u16','Full-stack dev with interest in data.'),(6,19,'City 19','https://www.linkedin.com/in/user19','https://portfolio.example.com/u19','Full-stack dev with interest in data.'),(7,5,'City 5','https://www.linkedin.com/in/user5','https://portfolio.example.com/u5','Full-stack dev with interest in data.'),(8,8,'City 8','https://www.linkedin.com/in/user8','https://portfolio.example.com/u8','Full-stack dev with interest in data.'),(9,15,'City 15','https://www.linkedin.com/in/user15','https://portfolio.example.com/u15','Full-stack dev with interest in data.'),(10,13,'City 13','https://www.linkedin.com/in/user13','https://portfolio.example.com/u13','Full-stack dev with interest in data.'),(11,20,'City 20','https://www.linkedin.com/in/user20','https://portfolio.example.com/u20','Full-stack dev with interest in data.'),(12,9,'City 9','https://www.linkedin.com/in/user9','https://portfolio.example.com/u9','Full-stack dev with interest in data.'),(13,12,'City 12','https://www.linkedin.com/in/user12','https://portfolio.example.com/u12','Full-stack dev with interest in data.'),(14,2,'City 2','https://www.linkedin.com/in/user2','https://portfolio.example.com/u2','Full-stack dev with interest in data.'),(15,10,'City 10','https://www.linkedin.com/in/user10','https://portfolio.example.com/u10','Full-stack dev with interest in data.'),(16,3,'City 3','https://www.linkedin.com/in/user3','https://portfolio.example.com/u3','Full-stack dev with interest in data.'),(17,4,'City 4','https://www.linkedin.com/in/user4','https://portfolio.example.com/u4','Full-stack dev with interest in data.'),(18,6,'City 6','https://www.linkedin.com/in/user6','https://portfolio.example.com/u6','Full-stack dev with interest in data.'),(19,7,'City 7','https://www.linkedin.com/in/user7','https://portfolio.example.com/u7','Full-stack dev with interest in data.'),(20,18,'City 18','https://www.linkedin.com/in/user18','https://portfolio.example.com/u18','Full-stack dev with interest in data.'),(21,25,'Cary, NC','https://linkedin.com/in/nealsshah','https://github.com/nealsshah',NULL);
 /*!40000 ALTER TABLE `CandidateProfile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -160,7 +160,7 @@ CREATE TABLE `InterviewSchedule` (
   PRIMARY KEY (`InterviewID`),
   KEY `ApplicationID` (`ApplicationID`),
   CONSTRAINT `interviewschedule_ibfk_1` FOREIGN KEY (`ApplicationID`) REFERENCES `ApplicationForm` (`ApplicationID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,7 +169,7 @@ CREATE TABLE `InterviewSchedule` (
 
 LOCK TABLES `InterviewSchedule` WRITE;
 /*!40000 ALTER TABLE `InterviewSchedule` DISABLE KEYS */;
-INSERT INTO `InterviewSchedule` VALUES (1,4,'2025-10-27 15:57:18','Onsite',1),(2,6,'2025-10-29 15:57:18','Phone',1),(3,8,'2025-10-31 15:57:18','Remote',1),(4,10,'2025-11-02 15:57:18','Onsite',1),(5,12,'2025-11-04 15:57:18','Phone',1),(6,16,'2025-11-08 15:57:18','Onsite',1),(7,17,'2025-11-09 15:57:18','Remote',1),(8,20,'2025-11-12 15:57:18','Remote',1);
+INSERT INTO `InterviewSchedule` VALUES (1,4,'2025-10-27 15:57:18','Onsite',1),(2,6,'2025-10-29 15:57:18','Phone',1),(3,8,'2025-10-31 15:57:18','Remote',1),(4,10,'2025-11-02 15:57:18','Onsite',1),(5,12,'2025-11-04 15:57:18','Phone',1),(6,16,'2025-11-08 15:57:18','Onsite',1),(7,17,'2025-11-09 15:57:18','Remote',1),(8,20,'2025-11-12 15:57:18','Remote',1),(10,21,'2025-12-01 14:00:00','Remote',1),(11,11,'2025-12-02 14:00:00','Remote',1);
 /*!40000 ALTER TABLE `InterviewSchedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +190,7 @@ CREATE TABLE `JobApplicant` (
   PRIMARY KEY (`ApplicantID`),
   UNIQUE KEY `Email` (`Email`),
   CONSTRAINT `jobapplicant_chk_1` CHECK ((`Email` like _utf8mb4'%@%._%'))
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +199,7 @@ CREATE TABLE `JobApplicant` (
 
 LOCK TABLES `JobApplicant` WRITE;
 /*!40000 ALTER TABLE `JobApplicant` DISABLE KEYS */;
-INSERT INTO `JobApplicant` VALUES (1,'Ava','Nguyen','ava.nguyen@example.com','555-1000','2025-10-23 15:57:18'),(2,'Liam','Patel','liam.patel@example.com','555-1001','2025-10-23 15:57:18'),(3,'Mia','Johnson','mia.j@example.com','555-1002','2025-10-23 15:57:18'),(4,'Noah','Brown','noah.brown@example.com','555-1003','2025-10-23 15:57:18'),(5,'Emma','Garcia','emma.g@example.com','555-1004','2025-10-23 15:57:18'),(6,'Oliver','Davis','oliver.d@example.com','555-1005','2025-10-23 15:57:18'),(7,'Sophia','Wilson','sophia.w@example.com','555-1006','2025-10-23 15:57:18'),(8,'Ethan','Martinez','ethan.m@example.com','555-1007','2025-10-23 15:57:18'),(9,'Isabella','Anderson','isa.a@example.com','555-1008','2025-10-23 15:57:18'),(10,'Lucas','Thomas','lucas.t@example.com','555-1009','2025-10-23 15:57:18'),(11,'Amelia','Moore','amelia.m@example.com','555-1010','2025-10-23 15:57:18'),(12,'James','Taylor','james.t@example.com','555-1011','2025-10-23 15:57:18'),(13,'Harper','Lee','harper.lee@example.com','555-1012','2025-10-23 15:57:18'),(14,'Benjamin','Harris','ben.h@example.com','555-1013','2025-10-23 15:57:18'),(15,'Evelyn','Clark','evelyn.c@example.com','555-1014','2025-10-23 15:57:18'),(16,'Elijah','Lewis','elijah.l@example.com','555-1015','2025-10-23 15:57:18'),(17,'Abigail','Robinson','abigail.r@example.com','555-1016','2025-10-23 15:57:18'),(18,'William','Walker','william.w@example.com','555-1017','2025-10-23 15:57:18'),(19,'Emily','Young','emily.y@example.com','555-1018','2025-10-23 15:57:18'),(20,'Henry','King','henry.k@example.com','555-1019','2025-10-23 15:57:18');
+INSERT INTO `JobApplicant` VALUES (1,'Ava','Nguyen','ava.nguyen@example.com','555-1000','2025-10-23 15:57:18'),(2,'Liam','Patel','liam.patel@example.com','555-1001','2025-10-23 15:57:18'),(3,'Mia','Johnson','mia.j@example.com','555-1002','2025-10-23 15:57:18'),(4,'Noah','Brown','noah.brown@example.com','555-1003','2025-10-23 15:57:18'),(5,'Emma','Garcia','emma.g@example.com','555-1004','2025-10-23 15:57:18'),(6,'Oliver','Davis','oliver.d@example.com','555-1005','2025-10-23 15:57:18'),(7,'Sophia','Wilson','sophia.w@example.com','555-1006','2025-10-23 15:57:18'),(8,'Ethan','Martinez','ethan.m@example.com','555-1007','2025-10-23 15:57:18'),(9,'Isabella','Anderson','isa.a@example.com','555-1008','2025-10-23 15:57:18'),(10,'Lucas','Thomas','lucas.t@example.com','555-1009','2025-10-23 15:57:18'),(11,'Amelia','Moore','amelia.m@example.com','555-1010','2025-10-23 15:57:18'),(12,'James','Taylor','james.t@example.com','555-1011','2025-10-23 15:57:18'),(13,'Harper','Lee','harper.lee@example.com','555-1012','2025-10-23 15:57:18'),(14,'Benjamin','Harris','ben.h@example.com','555-1013','2025-10-23 15:57:18'),(15,'Evelyn','Clark','evelyn.c@example.com','555-1014','2025-10-23 15:57:18'),(16,'Elijah','Lewis','elijah.l@example.com','555-1015','2025-10-23 15:57:18'),(17,'Abigail','Robinson','abigail.r@example.com','555-1016','2025-10-23 15:57:18'),(18,'William','Walker','william.w@example.com','555-1017','2025-10-23 15:57:18'),(19,'Emily','Young','emily.y@example.com','555-1018','2025-10-23 15:57:18'),(20,'Henry','King','henry.k@example.com','555-1019','2025-10-23 15:57:18'),(25,'Neal','Shah','nealshah@vt.edu','9196562104','2025-12-01 15:30:05');
 /*!40000 ALTER TABLE `JobApplicant` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -274,7 +274,7 @@ CREATE TABLE `Recruiter` (
   `Email` varchar(255) NOT NULL,
   PRIMARY KEY (`RecruiterID`),
   UNIQUE KEY `Email` (`Email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -283,7 +283,7 @@ CREATE TABLE `Recruiter` (
 
 LOCK TABLES `Recruiter` WRITE;
 /*!40000 ALTER TABLE `Recruiter` DISABLE KEYS */;
-INSERT INTO `Recruiter` VALUES (1,'Riley Carter','recruiter1@corp.com'),(2,'Jordan Kim','recruiter2@corp.com'),(3,'Casey Morgan','recruiter3@corp.com');
+INSERT INTO `Recruiter` VALUES (1,'Riley Carter','recruiter1@corp.com'),(2,'Jordan Kim','recruiter2@corp.com'),(3,'Casey Morgan','recruiter3@corp.com'),(4,'peal','peal');
 /*!40000 ALTER TABLE `Recruiter` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -333,7 +333,7 @@ CREATE TABLE `StatusUpdate` (
   PRIMARY KEY (`UpdateID`),
   KEY `ApplicationID` (`ApplicationID`),
   CONSTRAINT `statusupdate_ibfk_1` FOREIGN KEY (`ApplicationID`) REFERENCES `ApplicationForm` (`ApplicationID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -342,8 +342,36 @@ CREATE TABLE `StatusUpdate` (
 
 LOCK TABLES `StatusUpdate` WRITE;
 /*!40000 ALTER TABLE `StatusUpdate` DISABLE KEYS */;
-INSERT INTO `StatusUpdate` VALUES (1,1,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(2,2,'Submitted','Submitted','2025-10-23 15:57:18','Auto transition for seed data'),(3,3,'Submitted','Submitted','2025-10-23 15:57:18','Auto transition for seed data'),(4,4,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(5,5,'Submitted','Submitted','2025-10-23 15:57:18','Auto transition for seed data'),(6,6,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(7,7,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(8,8,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data'),(9,9,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(10,10,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data'),(11,11,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(12,12,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(13,13,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(14,14,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(15,15,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(16,16,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data'),(17,17,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(18,18,'Submitted','Submitted','2025-10-23 15:57:18','Auto transition for seed data'),(19,19,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(20,20,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data');
+INSERT INTO `StatusUpdate` VALUES (1,1,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(2,2,'Submitted','Submitted','2025-10-23 15:57:18','Auto transition for seed data'),(3,3,'Submitted','Submitted','2025-10-23 15:57:18','Auto transition for seed data'),(4,4,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(5,5,'Submitted','Submitted','2025-10-23 15:57:18','Auto transition for seed data'),(6,6,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(7,7,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(8,8,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data'),(9,9,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(10,10,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data'),(11,11,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(12,12,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(13,13,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(14,14,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(15,15,'Submitted','Rejected','2025-10-23 15:57:18','Auto transition for seed data'),(16,16,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data'),(17,17,'Submitted','Offer','2025-10-23 15:57:18','Auto transition for seed data'),(19,19,'Submitted','Under Review','2025-10-23 15:57:18','Auto transition for seed data'),(20,20,'Submitted','Interview Scheduled','2025-10-23 15:57:18','Auto transition for seed data'),(21,21,'Submitted','Interview Scheduled','2025-12-01 17:06:10','Status changed to Interview Scheduled'),(22,21,'Interview Scheduled','Submitted','2025-12-01 17:09:21','Status changed to Submitted'),(23,21,'Submitted','Offer','2025-12-01 17:09:23','Status changed to Offer'),(24,21,'Interview Scheduled','Submitted','2025-12-01 17:24:33','Status changed to Submitted'),(25,21,'Submitted','Submitted','2025-12-01 17:24:34','Status changed to Submitted'),(26,21,'Submitted','Submitted','2025-12-01 17:24:35','Status changed to Submitted'),(27,21,'Submitted','Submitted','2025-12-01 17:27:19','Status changed to Submitted');
 /*!40000 ALTER TABLE `StatusUpdate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Users`
+--
+
+DROP TABLE IF EXISTS `Users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Users` (
+  `UserID` int NOT NULL AUTO_INCREMENT,
+  `Username` varchar(50) NOT NULL,
+  `PasswordHash` varchar(64) NOT NULL,
+  `UserType` enum('Admin','JobApplicant','Recruiter','Interviewer','HiringManager') NOT NULL,
+  `CreatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`UserID`),
+  UNIQUE KEY `Username` (`Username`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Users`
+--
+
+LOCK TABLES `Users` WRITE;
+/*!40000 ALTER TABLE `Users` DISABLE KEYS */;
+INSERT INTO `Users` VALUES (1,'admin','240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9','Admin','2025-12-01 14:52:49'),(2,'applicantNeal','75b91423301a87da8168415887de5eab3623944f35de37d9272b6b6054ee831f','JobApplicant','2025-12-01 14:54:38'),(3,'applicantNeal2','0c371b8522bd9854545f1e771cb4e28a8035ac4d4f2fd2a67818fd9e43c36bc9','JobApplicant','2025-12-01 14:55:15'),(4,'nealshah','$2a$10$v3WGgm.XyNOMBAEklHfmAuxozE0YY7kHtC5T/dceDRDqwjrwzYviO','JobApplicant','2025-12-01 15:25:06'),(5,'peal','$2a$10$zuqasKlQNEWyFztHAFEU2OJs/P4Uc/rayN21KctB.djastjaSmbqe','Recruiter','2025-12-01 15:26:01'),(6,'ns','$2a$10$3VvlE4sQG9wqOidxbRyHTO7q3eeg/GtEkn7nzpvIJcvOUqZuTLBSS','JobApplicant','2025-12-01 17:30:49');
+/*!40000 ALTER TABLE `Users` ENABLE KEYS */;
 UNLOCK TABLES;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -356,4 +384,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-01 14:45:31
+-- Dump completed on 2025-12-01 17:34:56

@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 export interface User {
   UserID: number;
   Username: string;
-  UserType: 'JobApplicant' | 'Recruiter';
+  UserType: 'Admin' | 'JobApplicant' | 'Recruiter';
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -94,5 +94,77 @@ export async function login(username: string, password: string): Promise<User> {
     Username: user.Username,
     UserType: user.UserType
   };
+}
+
+export async function changePassword(userId: number, oldPassword: string, newPassword: string): Promise<void> {
+  if (!oldPassword || !newPassword) {
+    throw new Error('Old password and new password are required');
+  }
+
+  if (newPassword.length < 6) {
+    throw new Error('New password must be at least 6 characters');
+  }
+
+  // Get user with password hash
+  const users = await query(
+    'SELECT UserID, PasswordHash FROM Users WHERE UserID = ?',
+    [userId]
+  ) as any[];
+
+  if (users.length === 0) {
+    throw new Error('User not found');
+  }
+
+  const user = users[0];
+
+  // Verify old password
+  const isValid = await verifyPassword(oldPassword, user.PasswordHash);
+  if (!isValid) {
+    throw new Error('Current password is incorrect');
+  }
+
+  // Hash new password
+  const newPasswordHash = await hashPassword(newPassword);
+
+  // Update password
+  await query(
+    'UPDATE Users SET PasswordHash = ? WHERE UserID = ?',
+    [newPasswordHash, userId]
+  );
+}
+
+export async function createAdminByAdmin(adminUserId: number, username: string, password: string): Promise<void> {
+  // Verify current user is admin
+  const users = await query(
+    'SELECT UserType FROM Users WHERE UserID = ?',
+    [adminUserId]
+  ) as any[];
+
+  if (users.length === 0 || users[0].UserType !== 'Admin') {
+    throw new Error('Only admins can create other admins');
+  }
+
+  // Check if username exists
+  const existing = await query(
+    'SELECT UserID FROM Users WHERE Username = ?',
+    [username]
+  ) as any[];
+
+  if (existing.length > 0) {
+    throw new Error('Username already exists');
+  }
+
+  if (password.length < 6) {
+    throw new Error('Password must be at least 6 characters');
+  }
+
+  // Hash password
+  const hashedPassword = await hashPassword(password);
+
+  // Insert admin user
+  await query(
+    'INSERT INTO Users (Username, PasswordHash, UserType) VALUES (?, ?, ?)',
+    [username, hashedPassword, 'Admin']
+  );
 }
 

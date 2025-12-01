@@ -27,6 +27,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Prevent admin creation through signup
+    if (userType === 'Admin') {
+      return NextResponse.json(
+        { error: 'Admin accounts cannot be created through signup. Only existing admins can create other admins.' },
+        { status: 403 }
+      );
+    }
+
     const user = await signup(username, password, userType);
     const token = generateToken(user);
 

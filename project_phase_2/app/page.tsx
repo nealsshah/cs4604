@@ -20,6 +20,8 @@ export default function Home() {
             router.push('/applicant/dashboard');
           } else if (data.user.UserType === 'Recruiter') {
             router.push('/recruiter/dashboard');
+          } else if (data.user.UserType === 'Admin') {
+            router.push('/admin/dashboard');
           }
         }
         setLoading(false);

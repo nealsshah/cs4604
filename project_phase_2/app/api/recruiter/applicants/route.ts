@@ -19,11 +19,13 @@ export async function GET(request: NextRequest) {
       SELECT DISTINCT 
         ja.ApplicantID, ja.FirstName, ja.LastName, ja.Email, ja.Phone,
         cp.Location, cp.Summary,
-        af.Status as ApplicationStatus, af.AppliedAt
+        af.Status as ApplicationStatus, af.AppliedAt, af.ApplicationID, af.JobID,
+        jp.Title as JobTitle
       FROM JobApplicant ja
       LEFT JOIN CandidateProfile cp ON ja.ApplicantID = cp.ApplicantID
       LEFT JOIN ApplicationForm af ON ja.ApplicantID = af.ApplicantID
-      WHERE 1=1
+      LEFT JOIN JobPosting jp ON af.JobID = jp.JobID
+      WHERE af.ApplicationID IS NOT NULL
     `;
     const params: any[] = [];
 
@@ -37,11 +39,7 @@ export async function GET(request: NextRequest) {
       params.push(status);
     }
 
-    // Note: Experience filtering would require parsing the Summary field
-    // or adding an Experience field to CandidateProfile
-    // For now, we'll just return all applicants
-
-    sql += ' ORDER BY ja.LastName, ja.FirstName';
+    sql += ' ORDER BY af.AppliedAt DESC, ja.LastName, ja.FirstName';
 
     const applicants = await query(sql, params) as any[];
 

@@ -32,7 +32,7 @@ export default function Navbar() {
         {user ? (
           <>
             <span style={{ fontSize: '14px', opacity: 0.9 }}>
-              {user.Username} <span style={{ opacity: 0.7 }}>({user.UserType === 'JobApplicant' ? 'Applicant' : 'Recruiter'})</span>
+              {user.Username} <span style={{ opacity: 0.7 }}>({user.UserType === 'JobApplicant' ? 'Applicant' : user.UserType === 'Recruiter' ? 'Recruiter' : 'Admin'})</span>
             </span>
             <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '14px' }}>
               Logout

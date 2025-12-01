@@ -65,16 +65,26 @@ export async function GET(request: NextRequest) {
       ) as any[];
     } else {
       interviews = await query(
-        `SELECT is.*, af.ApplicantID, ja.FirstName, ja.LastName, jp.Title as JobTitle
-         FROM InterviewSchedule is
-         JOIN ApplicationForm af ON is.ApplicationID = af.ApplicationID
+        `SELECT 
+          ins.InterviewID,
+          ins.ApplicationID,
+          ins.InterviewDateTime,
+          ins.Mode,
+          ins.RoundNumber,
+          af.ApplicantID,
+          ja.FirstName,
+          ja.LastName,
+          jp.Title as JobTitle
+         FROM InterviewSchedule ins
+         JOIN ApplicationForm af ON ins.ApplicationID = af.ApplicationID
          JOIN JobApplicant ja ON af.ApplicantID = ja.ApplicantID
          JOIN JobPosting jp ON af.JobID = jp.JobID
-         ORDER BY is.InterviewDateTime`
+         ORDER BY ins.InterviewDateTime`
       ) as any[];
     }
 
-    return NextResponse.json({ interviews });
+    console.log('Interviews query result:', interviews);
+    return NextResponse.json({ interviews: interviews || [] });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -137,9 +147,39 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'InterviewID required' }, { status: 400 });
     }
 
+    // Get the ApplicationID before deleting
+    const interviews = await query(
+      'SELECT ApplicationID FROM InterviewSchedule WHERE InterviewID = ?',
+      [interviewId]
+    ) as any[];
+
+    if (interviews.length === 0) {
+      return NextResponse.json({ error: 'Interview not found' }, { status: 404 });
+    }
+
+    const applicationId = interviews[0].ApplicationID;
+
+    // Delete the interview
     await query('DELETE FROM InterviewSchedule WHERE InterviewID = ?', [interviewId]);
 
-    return NextResponse.json({ success: true });
+    // Check if there are any other interviews for this application
+    const remainingInterviews = await query(
+      'SELECT InterviewID FROM InterviewSchedule WHERE ApplicationID = ?',
+      [applicationId]
+    ) as any[];
+
+    // If no more interviews, update application status back to "Under Review"
+    if (remainingInterviews.length === 0) {
+      await query(
+        'UPDATE ApplicationForm SET Status = "Under Review" WHERE ApplicationID = ?',
+        [applicationId]
+      );
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      applicationId 
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
