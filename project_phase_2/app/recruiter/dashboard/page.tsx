@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useDialog } from '@/components/Dialog';
+import ReportChart from '@/components/ReportChart';
 
 export default function RecruiterDashboard() {
   const router = useRouter();
@@ -872,9 +873,15 @@ function RecruiterReports({ recruiterId }: { recruiterId: string }) {
             <div style={{ padding: '24px', background: '#f8f9ff', borderRadius: '12px' }}>
               <h3>{reportData.report}</h3>
               <p style={{ color: '#666', marginBottom: '16px' }}>{reportData.description}</p>
-              <pre style={{ background: '#fff', padding: '16px', borderRadius: '8px', overflow: 'auto' }}>
-                {JSON.stringify(reportData.data, null, 2)}
-              </pre>
+              {reportData.data && (
+                <div style={{ marginTop: '24px' }}>
+                  <ReportChart 
+                    data={reportData.data} 
+                    reportType={selectedReport}
+                    chartType={reportData.chartType || 'stat'}
+                  />
+                </div>
+              )}
             </div>
           )}
         </>
