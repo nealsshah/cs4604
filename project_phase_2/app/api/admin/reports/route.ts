@@ -28,7 +28,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ 
           report: 'System Overview Statistics',
           data: result[0],
-          description: 'Total counts across all major entities in the system'
+          description: 'Total counts across all major entities in the system',
+          chartType: 'stat'
         });
 
       case '2': // Average applications per job posting
@@ -45,10 +46,17 @@ export async function GET(request: NextRequest) {
             GROUP BY jp.JobID
           ) as jobApplications
         `);
+        const report2Data = result[0] || { avgApplicationsPerJob: null, minApplicationsPerJob: null, maxApplicationsPerJob: null, totalApplications: 0 };
         return NextResponse.json({ 
           report: 'Application Statistics per Job',
-          data: result[0] || { avgApplicationsPerJob: 0, minApplicationsPerJob: 0, maxApplicationsPerJob: 0, totalApplications: 0 },
-          description: 'Average, minimum, maximum, and total applications across all job postings'
+          data: {
+            avgApplicationsPerJob: report2Data.avgApplicationsPerJob ? Number(report2Data.avgApplicationsPerJob).toFixed(2) : '0.00',
+            minApplicationsPerJob: report2Data.minApplicationsPerJob ? Number(report2Data.minApplicationsPerJob) : 0,
+            maxApplicationsPerJob: report2Data.maxApplicationsPerJob ? Number(report2Data.maxApplicationsPerJob) : 0,
+            totalApplications: Number(report2Data.totalApplications || 0)
+          },
+          description: 'Average, minimum, maximum, and total applications across all job postings',
+          chartType: 'bar'
         });
 
       case '3': // User registration trends (sum by month)
@@ -63,10 +71,20 @@ export async function GET(request: NextRequest) {
           GROUP BY DATE_FORMAT(CreatedAt, '%Y-%m')
           ORDER BY month DESC
         `);
+        const formattedData3 = (result || []).map((row: any) => ({
+          month: row.month,
+          userCount: Number(row.userCount),
+          applicantCount: Number(row.applicantCount),
+          recruiterCount: Number(row.recruiterCount),
+          adminCount: Number(row.adminCount),
+          value: Number(row.userCount),
+          label: row.month
+        }));
         return NextResponse.json({ 
           report: 'User Registration Trends',
-          data: result,
-          description: 'Sum of user registrations by month, broken down by user type'
+          data: formattedData3,
+          description: 'Sum of user registrations by month, broken down by user type',
+          chartType: 'bar'
         });
 
       case '4': // Interview success rate analysis
@@ -81,10 +99,19 @@ export async function GET(request: NextRequest) {
           FROM Interview i
           JOIN ApplicationForm af ON i.ApplicationID = af.ApplicationID
         `);
+        const report4Data = result[0] || { totalInterviews: 0, interviewsLeadingToOffer: 0, avgInterviewRounds: null, minRounds: null, maxRounds: null, successRate: 0 };
         return NextResponse.json({ 
           report: 'Interview Success Analysis',
-          data: result[0] || { totalInterviews: 0, interviewsLeadingToOffer: 0, avgInterviewRounds: 0, minRounds: 0, maxRounds: 0, successRate: 0 },
-          description: 'Statistics on interviews including success rates and round analysis'
+          data: {
+            totalInterviews: Number(report4Data.totalInterviews),
+            interviewsLeadingToOffer: Number(report4Data.interviewsLeadingToOffer),
+            avgInterviewRounds: report4Data.avgInterviewRounds ? Number(report4Data.avgInterviewRounds).toFixed(2) : '0.00',
+            minRounds: report4Data.minRounds ? Number(report4Data.minRounds) : 0,
+            maxRounds: report4Data.maxRounds ? Number(report4Data.maxRounds) : 0,
+            successRate: Number(report4Data.successRate || 0).toFixed(2)
+          },
+          description: 'Statistics on interviews including success rates and round analysis',
+          chartType: 'stat'
         });
 
       case '5': // Job posting performance by status
@@ -104,10 +131,21 @@ export async function GET(request: NextRequest) {
           ) af ON jp.JobID = af.JobID
           GROUP BY jp.Status
         `);
+        const formattedData5 = (result || []).map((row: any) => ({
+          Status: row.Status,
+          jobCount: Number(row.jobCount),
+          jobsWithApplications: Number(row.jobsWithApplications),
+          avgApplicationsPerJob: row.avgApplicationsPerJob ? Number(row.avgApplicationsPerJob).toFixed(2) : '0.00',
+          minApplications: row.minApplications ? Number(row.minApplications) : 0,
+          maxApplications: row.maxApplications ? Number(row.maxApplications) : 0,
+          value: Number(row.jobCount),
+          label: row.Status
+        }));
         return NextResponse.json({ 
           report: 'Job Posting Performance by Status',
-          data: result,
-          description: 'Comprehensive statistics on job postings grouped by status'
+          data: formattedData5,
+          description: 'Comprehensive statistics on job postings grouped by status',
+          chartType: 'bar'
         });
 
       default:

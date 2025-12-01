@@ -29,22 +29,30 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ 
           report: 'Total Applications Submitted',
           data: result[0],
-          description: 'Count of all job applications submitted by this applicant'
+          description: 'Count of all job applications submitted by this applicant',
+          chartType: 'stat'
         });
 
       case '2': // Average days since application per status
         result = await query(`
           SELECT 
             Status,
-            AVG(DATEDIFF(CURDATE(), DATE(AppliedAt))) as avgDaysSinceApplication
+            COALESCE(AVG(DATEDIFF(CURDATE(), DATE(AppliedAt))), 0) as avgDaysSinceApplication
           FROM ApplicationForm
           WHERE ApplicantID = ?
           GROUP BY Status
         `, [applicantId]);
+        const formattedData2 = (result || []).map((row: any) => ({
+          Status: row.Status,
+          avgDaysSinceApplication: Number(row.avgDaysSinceApplication).toFixed(2),
+          value: Number(row.avgDaysSinceApplication),
+          label: row.Status
+        }));
         return NextResponse.json({ 
           report: 'Average Days Since Application by Status',
-          data: result,
-          description: 'Average number of days since application grouped by application status'
+          data: formattedData2,
+          description: 'Average number of days since application grouped by application status',
+          chartType: 'bar'
         });
 
       case '3': // Maximum applications in a single month
@@ -74,10 +82,17 @@ export async function GET(request: NextRequest) {
           FROM ApplicationForm
           WHERE ApplicantID = ? AND Status = 'Offer'
         `, [applicantId]);
+        const report4Data = result[0] || { minDaysSinceApplication: 0, maxDaysSinceApplication: 0, avgDaysSinceApplication: 0, offerCount: 0 };
         return NextResponse.json({ 
           report: 'Days Analysis for Offers',
-          data: result[0] || { minDaysSinceApplication: 0, maxDaysSinceApplication: 0, avgDaysSinceApplication: 0, offerCount: 0 },
-          description: 'Minimum, maximum, and average days since application for offer status applications'
+          data: {
+            minDaysSinceApplication: Number(report4Data.minDaysSinceApplication),
+            maxDaysSinceApplication: Number(report4Data.maxDaysSinceApplication),
+            avgDaysSinceApplication: Number(report4Data.avgDaysSinceApplication).toFixed(2),
+            offerCount: Number(report4Data.offerCount)
+          },
+          description: 'Minimum, maximum, and average days since application for offer status applications',
+          chartType: 'bar'
         });
 
       case '5': // Sum of applications by job status
@@ -91,10 +106,19 @@ export async function GET(request: NextRequest) {
           WHERE ApplicantID = ?
           GROUP BY Status
         `, [applicantId]);
+        const formattedData5 = (result || []).map((row: any) => ({
+          Status: row.Status,
+          statusCount: Number(row.statusCount),
+          offerCount: Number(row.offerCount),
+          rejectedCount: Number(row.rejectedCount),
+          value: Number(row.statusCount),
+          label: row.Status
+        }));
         return NextResponse.json({ 
           report: 'Application Status Summary',
-          data: result,
-          description: 'Total count and sum breakdown of applications by status'
+          data: formattedData5,
+          description: 'Total count and sum breakdown of applications by status',
+          chartType: 'pie'
         });
 
       default:
